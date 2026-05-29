@@ -31,9 +31,10 @@ export default function Footer({ onScrollToElement }: FooterProps) {
             <img 
               src={logoSecundario} 
               alt="Creditivoo Empresas" 
+              loading="lazy"
               className="h-9 md:h-10 w-auto" 
             />
-            <p className="text-sm text-slate-500 leading-relaxed max-w-xs">
+            <p className="text-sm text-slate-600 leading-relaxed max-w-xs">
               La solución de financiamiento propio de IVOO para tecnología, electrodomésticos y bienes corporativos.
             </p>
           </div>
@@ -113,7 +114,7 @@ export default function Footer({ onScrollToElement }: FooterProps) {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-slate-800 leading-none">WhatsApp Oficial</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">+58 (414) IVOO-CRE</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">+58 (414) IVOO-CRE</p>
                   </div>
                 </a>
               </li>
@@ -127,7 +128,7 @@ export default function Footer({ onScrollToElement }: FooterProps) {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-slate-800 leading-none">Correo Electrónico</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">solicitudes@creditivoo.com</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">solicitudes@creditivoo.com</p>
                   </div>
                 </a>
               </li>
@@ -139,7 +140,7 @@ export default function Footer({ onScrollToElement }: FooterProps) {
                       href={`https://${social}.com/ivoovenezuela`}
                       target="_blank"
                       rel="noreferrer noopener"
-                      className="px-3 py-1.5 bg-slate-50 hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 border border-slate-100 hover:border-emerald-100 rounded-lg transition-all duration-200 capitalize text-[11px] font-bold"
+                      className="px-3 py-1.5 bg-slate-50 hover:bg-emerald-50 text-slate-500 hover:text-emerald-600 border border-slate-100 hover:border-emerald-100 rounded-lg transition-all duration-200 capitalize text-[11px] font-bold"
                     >
                       {social}
                     </a>
@@ -159,10 +160,10 @@ export default function Footer({ onScrollToElement }: FooterProps) {
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
               </div>
               <div>
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest leading-none block mb-1.5">
+                <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest leading-none block mb-1.5">
                   Cumplimiento Regulatorio
                 </span>
-                <p className="text-xs text-slate-500 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Creditivoo no es una entidad bancaria tradicional ni emite tarjetas de crédito de uso universal. Las líneas de compra están sujetas a debida evaluación de riesgos y consignación digital de documentos verificados.
                 </p>
               </div>
@@ -171,7 +172,7 @@ export default function Footer({ onScrollToElement }: FooterProps) {
         </div>
 
         {/* ━━━ Copyright Strip ━━━ */}
-        <div className="pt-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-400 border-t border-slate-100">
+        <div className="pt-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500 border-t border-slate-100">
           <p className="pt-4">© {currentYear} Creditivoo. Todos los derechos reservados. Desarrollado para IVOO.</p>
           <div className="flex items-center gap-1.5 pt-4 font-semibold">
             <Globe className="w-3.5 h-3.5 text-emerald-600" />

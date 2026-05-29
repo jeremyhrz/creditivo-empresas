@@ -3,89 +3,85 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { FileCheck2, ShieldAlert, BadgeInfo } from 'lucide-react';
+import React from 'react';
+import { motion } from 'motion/react';
+import { FileCheck2, ShieldAlert, BadgeInfo, Check, FolderOpen } from 'lucide-react';
 import { REQUIREMENTS } from '../landingData';
 
 export default function RequirementTabs() {
-  const [activeTab, setActiveTab] = useState<'mayorista' | 'emprendedor' | 'nomina' | 'empresas'>('mayorista');
-
-  const currentTabInfo = REQUIREMENTS.find((req) => req.id === activeTab) || REQUIREMENTS[0];
-
   return (
-    <div className="w-full bg-white rounded-[2rem] border border-slate-100 p-8 md:p-12 shadow-sm">
-      {/* Scrollable Tab Controls */}
-      <div className="flex border-b border-slate-100 overflow-x-auto scrollbar-none pb-4 mb-8 gap-3">
-        {REQUIREMENTS.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
-            className={`whitespace-nowrap px-6 py-3 text-sm font-extrabold rounded-xl border transition-all cursor-pointer ${
-              activeTab === tab.id
-                ? 'bg-[#10D66B] text-white border-[#10D66B] shadow-lg shadow-[#10D66B]/20'
-                : 'bg-slate-50 text-slate-500 border-transparent hover:text-slate-800 hover:bg-slate-100'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+    <div className="w-full">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {REQUIREMENTS.map((req, idx) => {
+          // Asymmetric Bento Grid logic
+          // First and Last item take 2 columns, middle items take 1 column each
+          const isFeatured = idx === 0 || idx === 3;
+          
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
+              key={req.id}
+              className={`relative group flex flex-col justify-between p-8 sm:p-10 rounded-2xl border border-slate-200/60 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] transition-all duration-300 overflow-hidden ${
+                isFeatured ? 'md:col-span-2 bg-gradient-to-br from-slate-50 to-white' : 'md:col-span-1 bg-white'
+              }`}
+            >
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-80"></div>
+              
+              <div className="flex-grow">
+                <div className="flex justify-between items-start gap-4 mb-6">
+                  <div className="p-3.5 bg-slate-100 text-slate-700 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                    <FolderOpen className={isFeatured ? "w-7 h-7" : "w-5 h-5"} />
+                  </div>
+                  <span className="px-3 py-1 text-[10px] font-black tracking-widest uppercase rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100/60">
+                    {req.label}
+                  </span>
+                </div>
+
+                <h4 className={`${isFeatured ? 'text-3xl' : 'text-2xl'} font-extrabold text-slate-900 leading-tight tracking-tight mb-3`}>
+                  {req.title}
+                </h4>
+                <p className="text-sm text-slate-500 leading-relaxed mb-8 max-w-md">
+                  {req.description}
+                </p>
+
+                <div className="border-t border-slate-100/80 pt-6">
+                  <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <FileCheck2 className="w-3.5 h-3.5 text-slate-400" />
+                    Documentos a consignar
+                  </h5>
+                  
+                  <ul className={`${isFeatured ? 'grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3' : 'space-y-3'}`}>
+                    {req.documents.map((doc, docIdx) => (
+                      <li key={docIdx} className="flex gap-3 text-sm text-slate-600 items-start">
+                        <span className="mt-0.5 p-0.5 bg-slate-100 text-slate-500 rounded flex-shrink-0">
+                          <Check className="w-3 h-3 stroke-[3]" />
+                        </span>
+                        <span className="leading-relaxed font-medium">{doc}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              
+              {/* Disclaimer microcopy for featured cards */}
+              {isFeatured && (
+                <div className="mt-8 pt-6 border-t border-slate-100/80 flex gap-3 items-center text-left">
+                  <div className="p-1.5 bg-emerald-50 rounded-lg shrink-0">
+                    <BadgeInfo className="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                    Creditivoo evalúa de forma manual cada soporte. El objetivo es asignarte el mayor límite posible sin comprometer tu liquidez ni generar pasivos ocultos.
+                  </p>
+                </div>
+              )}
+              
+            </motion.div>
+          );
+        })}
       </div>
-
-      {/* Dynamic Animated Content Panel */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -15 }}
-          transition={{ duration: 0.25 }}
-          className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start"
-        >
-          {/* Tab Description Context */}
-          <div className="lg:col-span-5 space-y-6">
-            <h4 className="text-3xl font-extrabold text-slate-900 leading-tight tracking-tight">
-              {currentTabInfo.title}
-            </h4>
-            <p className="text-base text-slate-600 leading-relaxed">
-              {currentTabInfo.description}
-            </p>
-
-            <div className="p-5 bg-emerald-50 rounded-2xl border border-emerald-100/50 flex gap-4 text-left">
-              <div className="p-1.5 bg-emerald-100 rounded-lg shrink-0 mt-0.5">
-                <BadgeInfo className="w-5 h-5 text-[#006B3F]" />
-              </div>
-              <p className="text-sm text-emerald-800 leading-relaxed">
-                <strong>Análisis Personalizado:</strong> Recordamos que Creditivoo no es un banco. Los documentos suministrados son analizados manualmente para otorgar el máximo límite viable adaptado a tu capacidad real.
-              </p>
-            </div>
-          </div>
-
-          {/* Tab Document Bullets list */}
-          <div className="lg:col-span-7 bg-slate-50 rounded-2xl p-8 border border-slate-100">
-            <h5 className="text-sm font-extrabold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-              <div className="p-1 bg-white rounded-md border border-slate-200">
-                <FileCheck2 className="w-5 h-5 text-[#10D66B]" />
-              </div>
-              <span>Documentos a consignar</span>
-            </h5>
-            
-            <ul className="space-y-4">
-              {currentTabInfo.documents.map((doc, idx) => (
-                <li key={idx} className="flex gap-4 text-base text-slate-700 items-start">
-                  <span className="mt-1.5 w-2 h-2 rounded-full bg-[#10D66B] shrink-0"></span>
-                  <span className="leading-relaxed font-medium">{doc}</span>
-                </li>
-              ))}
-            </ul>
-
-            <p className="text-sm text-slate-400 mt-8 leading-relaxed flex gap-2 items-center">
-              <ShieldAlert className="w-4 h-4 shrink-0" />
-              <span>*Los recaudos pueden variar levemente según el criterio del analista asignado.</span>
-            </p>
-          </div>
-        </motion.div>
-      </AnimatePresence>
     </div>
   );
 }

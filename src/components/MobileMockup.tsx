@@ -84,6 +84,7 @@ export default function MobileMockup() {
                       <img
                         src={logoSecundario}
                         alt="Creditivoo"
+                        loading="eager"
                         className="h-10 w-auto object-contain"
                       />
                     </div>
@@ -91,7 +92,7 @@ export default function MobileMockup() {
                     <h3 className="text-center font-extrabold text-gray-900 text-base leading-tight mt-2">
                       Tu línea digital IVOO
                     </h3>
-                    <p className="text-center text-[10px] text-gray-400 mt-1.5 font-medium">
+                    <p className="text-center text-[10px] text-gray-500 mt-1.5 font-medium">
                       Sin bancos. Sin papeleo. Sin vueltas.
                     </p>
 
@@ -102,7 +103,7 @@ export default function MobileMockup() {
                         </div>
                         <div className="text-left">
                           <p className="text-[11px] font-bold text-gray-800">100% Protegido</p>
-                          <p className="text-[9px] text-gray-400 font-medium">Datos encriptados de extremo a extremo</p>
+                          <p className="text-[9px] text-gray-500 font-medium">Datos encriptados de extremo a extremo</p>
                         </div>
                       </div>
                       
@@ -112,7 +113,7 @@ export default function MobileMockup() {
                         </div>
                         <div className="text-left">
                           <p className="text-[11px] font-bold text-gray-800">Tres Perfiles</p>
-                          <p className="text-[9px] text-gray-400 font-medium">Mayorista, emprendedor o nómina</p>
+                          <p className="text-[9px] text-gray-500 font-medium">Mayorista, emprendedor o nómina</p>
                         </div>
                       </div>
                     </div>
@@ -146,7 +147,7 @@ export default function MobileMockup() {
                     <h3 className="font-extrabold text-gray-900 text-base mt-2 text-left leading-tight">
                       ¿Cuál es tu perfil?
                     </h3>
-                    <p className="text-[10px] text-gray-400 mt-1 text-left font-medium">
+                    <p className="text-[10px] text-gray-500 mt-1 text-left font-medium">
                       Selecciona el tipo de línea que necesitas.
                     </p>
 
@@ -167,7 +168,7 @@ export default function MobileMockup() {
                         >
                           <div>
                             <p className="text-[11px] font-bold text-gray-800">{prof.label}</p>
-                            <p className="text-[9px] text-gray-400 font-medium">{prof.desc}</p>
+                            <p className="text-[9px] text-gray-500 font-medium">{prof.desc}</p>
                           </div>
                           <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
                             selectedProfile === prof.id ? 'border-[#10D66B] bg-[#10D66B] text-white scale-110' : 'border-gray-300'
@@ -212,21 +213,21 @@ export default function MobileMockup() {
                     <h3 className="font-extrabold text-gray-900 text-base mt-2 text-left leading-tight">
                       Sube tus documentos
                     </h3>
-                    <p className="text-[10px] text-gray-400 mt-1 text-left font-medium">
+                    <p className="text-[10px] text-gray-500 mt-1 text-left font-medium">
                       Carga digital en segundos para iniciar tu revisión.
                     </p>
 
                     <div className="mt-4 space-y-3">
                       <div className="border border-dashed border-gray-200 rounded-xl p-4 bg-gray-50/50 flex flex-col items-center justify-center">
-                        <FileText className="w-5 h-5 text-gray-300 mb-1.5" />
+                        <FileText className="w-5 h-5 text-gray-400 mb-1.5" />
                         <p className="text-[10px] font-bold text-gray-700">Cédula & RIF</p>
-                        <p className="text-[8px] text-gray-400 font-medium">PDF o foto legible</p>
+                        <p className="text-[8px] text-gray-500 font-medium">PDF o foto legible</p>
                       </div>
 
                       <div className="border border-dashed border-gray-200 rounded-xl p-4 bg-gray-50/50 flex flex-col items-center justify-center">
-                        <Smartphone className="w-5 h-5 text-gray-300 mb-1.5" />
+                        <Smartphone className="w-5 h-5 text-gray-400 mb-1.5" />
                         <p className="text-[10px] font-bold text-gray-700">Prueba de Actividad</p>
-                        <p className="text-[8px] text-gray-400 font-medium">WhatsApp, Instagram o facturas</p>
+                        <p className="text-[8px] text-gray-500 font-medium">WhatsApp, Instagram o facturas</p>
                       </div>
 
                       {isSubmittingDoc && (
@@ -291,7 +292,7 @@ export default function MobileMockup() {
                     <div className="mt-4 p-3.5 bg-emerald-50/50 border border-emerald-100 rounded-2xl mx-auto max-w-[200px]">
                       <p className="text-[9px] text-emerald-700 uppercase tracking-widest font-black">Línea Estimada</p>
                       <p className="text-2xl font-black text-[#006B3F] mt-1 tracking-tight">$1,500</p>
-                      <p className="text-[8px] text-gray-400 mt-1 font-medium">Sujeto a validación de documentos</p>
+                      <p className="text-[8px] text-gray-500 mt-1 font-medium">Sujeto a validación de documentos</p>
                     </div>
                   </div>
 
@@ -354,7 +355,7 @@ export default function MobileMockup() {
             </div>
             <span className="text-[10px] font-extrabold text-gray-800 tracking-tight">Cédula & RIF</span>
           </div>
-          <p className="text-[9px] text-gray-400 mt-2 leading-snug font-medium">En revisión por analistas</p>
+          <p className="text-[9px] text-gray-500 mt-2 leading-snug font-medium">En revisión por analistas</p>
           <div className="mt-2.5">
             <StatusBadge status="pending" text="Revisión Manual" />
           </div>
@@ -379,7 +380,7 @@ export default function MobileMockup() {
             </div>
             <div className="text-left">
               <p className="text-[10px] font-extrabold text-gray-800">Convenio Nómina</p>
-              <p className="text-[8px] text-gray-400 mt-0.5 font-medium">Validado por tu empresa</p>
+              <p className="text-[8px] text-gray-500 mt-0.5 font-medium">Validado por tu empresa</p>
             </div>
           </div>
         </motion.div>

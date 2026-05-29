@@ -41,13 +41,13 @@ export interface FAQItem {
 }
 
 export interface LeadFormInput {
-  fullName: string;
-  identityDoc: string;
-  phone: string;
-  email: string;
+  companyName: string;
+  companyRif: string;
+  companyEmail: string;
+  monthlyRevenue: string;
+  commercialSector: string;
+  repName: string;
+  repPhone: string;
   requestType: 'mayorista' | 'emprendedor' | 'nomina' | 'empresa';
-  city: string;
-  ivooBranch: string;
-  message?: string;
   acceptedContact: boolean;
 }

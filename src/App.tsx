@@ -32,7 +32,9 @@ import SegmentCard from './components/SegmentCard';
 import BenefitCard from './components/BenefitCard';
 import StepCard from './components/StepCard';
 import RequirementTabs from './components/RequirementTabs';
+import StatusBadge from './components/StatusBadge';
 import LeadForm from './components/LeadForm';
+import CreditSimulator from './components/CreditSimulator';
 import FAQAccordion from './components/FAQAccordion';
 import CTASection from './components/CTASection';
 import Footer from './components/Footer';
@@ -92,11 +94,18 @@ export default function App() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* Hero Section */}
             <HeroSection onCtaClick={() => handleActionClick('mayorista')} onCompanyClick={() => handleActionClick('empresa')} />
             
+            {/* Credit Simulator Premium Component */}
+            <section className="py-20 md:py-24 bg-white relative z-10 -mt-10">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <CreditSimulator />
+              </div>
+            </section>
+
             {/* Formulario Principal de Leads */}
             <section id="formulario-solicitud-lead" className="py-28 md:py-36 bg-slate-50/60 border-t border-slate-100">
               <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
@@ -124,7 +133,7 @@ export default function App() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="pt-24"
           >
             {/* Segment Selection Cards */}
@@ -142,11 +151,13 @@ export default function App() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 items-stretch">
-                  {SEGMENTS.map((segment) => (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+                  {SEGMENTS.map((segment, index) => (
                     <SegmentCard
                       key={segment.id}
                       segment={segment}
+                      isFeatured={index === 0}
+                      index={index}
                       onSelect={(id) => handleActionClick(id as any)}
                     />
                   ))}
@@ -170,8 +181,8 @@ export default function App() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {BENEFITS.map((benefit) => (
-                    <BenefitCard key={benefit.id} benefit={benefit} />
+                  {BENEFITS.map((benefit, index) => (
+                    <BenefitCard key={benefit.id} benefit={benefit} index={index} />
                   ))}
                 </div>
               </div>
@@ -331,7 +342,7 @@ export default function App() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="pt-24"
           >
             <section className="py-28 md:py-36 bg-white">
@@ -348,8 +359,8 @@ export default function App() {
                   </p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 pt-4">
-                  {STEPS.map((step) => (
-                    <StepCard key={step.number} step={step} />
+                  {STEPS.map((step, index) => (
+                    <StepCard key={step.number} step={step} index={index} />
                   ))}
                 </div>
                 <div className="pt-8">
@@ -376,7 +387,7 @@ export default function App() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="pt-24"
           >
             <section className="py-28 md:py-36 bg-white">
@@ -405,7 +416,7 @@ export default function App() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="pt-24"
           >
             <section className="py-28 md:py-36 bg-slate-50/60 border-b border-slate-100">

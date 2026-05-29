@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Send, CheckCircle2, AlertCircle, Sparkles, Building2, UserCircle, Smartphone } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle, Building2, UserCircle, Smartphone, Sparkles, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { LeadFormInput } from '../types';
 
 interface LeadFormProps {
@@ -13,442 +13,386 @@ interface LeadFormProps {
   formId?: string;
 }
 
-const CITIES = [
-  'Valencia',
-  'Caracas',
-  'Maracaibo',
-  'Barquisimeto',
-  'Maracay',
-  'San Cristóbal',
-  'Puerto La Cruz',
-  'Mérida',
-  'Maturín',
-  'Barinas',
-  'Margarita',
-  'Otra Ciudad'
+const REVENUE_TIERS = [
+  'Menos de $5,000',
+  '$5,000 - $15,000',
+  '$15,000 - $50,000',
+  'Más de $50,000'
 ];
 
-const IVOO_BRANCHES = [
-  'IVOO Valencia (Guaparo - Sede Principal)',
-  'IVOO Caracas (Av. Las Mercedes)',
-  'IVOO Maracaibo (Av. Fuerzas Armadas)',
-  'IVOO Barquisimeto (Av. Venezuela)',
-  'IVOO Maracay (Av. Las Delicias)',
-  'IVOO San Cristóbal (Av. 19 de Abril)',
-  'IVOO Puerto La Cruz (Av. Intercomunal)',
-  'IVOO Mérida (Av. Las Américas)',
-  'IVOO Lechería',
-  'Plataforma Online / Despacho a domicilio'
+const SECTORS = [
+  'Tecnología y Electrónica',
+  'Electrodomésticos',
+  'Retail general',
+  'Servicios Profesionales',
+  'Salud y Farmacia',
+  'Otro sector'
 ];
 
 export default function LeadForm({ preSelectedType, formId = 'formulario-solicitud' }: LeadFormProps) {
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success'>('idle');
+  const [shakeField, setShakeField] = useState(false);
+
   const [formData, setFormData] = useState<LeadFormInput>({
-    fullName: '',
-    identityDoc: '',
-    phone: '',
-    email: '',
+    companyName: '',
+    companyRif: '',
+    companyEmail: '',
+    monthlyRevenue: '',
+    commercialSector: '',
+    repName: '',
+    repPhone: '',
     requestType: 'mayorista',
-    city: '',
-    ivooBranch: '',
-    message: '',
     acceptedContact: true
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof LeadFormInput, string>>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [shakeField, setShakeField] = useState(false);
 
-  // Sync with prop preSelectedType
   useEffect(() => {
     if (preSelectedType) {
-      setFormData((prev) => ({ ...prev, requestType: preSelectedType }));
+      setFormData(prev => ({ ...prev, requestType: preSelectedType }));
     }
   }, [preSelectedType]);
 
-  const validateField = (name: keyof LeadFormInput, value: any) => {
-    let err = '';
-    if (name === 'fullName') {
-      if (!value.trim()) err = 'El nombre completo es requerido';
-      else if (value.trim().split(' ').length < 2) err = 'Por favor, introduce nombre y apellido';
-    } else if (name === 'identityDoc') {
-      if (!value.trim()) err = 'La cédula o RIF comercial es mandatorio';
-    } else if (name === 'phone') {
-      if (!value.trim()) err = 'El número de teléfono es indispensable';
-    } else if (name === 'email') {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!value.trim()) err = 'El correo electrónico es requerido';
-      else if (!emailRegex.test(value)) err = 'Ingresa un correo electrónico válido';
-    } else if (name === 'city') {
-      if (!value) err = 'Selecciona tu ciudad';
-    } else if (name === 'ivooBranch') {
-      if (!value) err = 'Selecciona una sucursal de interés';
-    } else if (name === 'acceptedContact') {
-      if (!value) err = 'Debes aceptar ser contactado para continuar';
+  const validateStep = (step: number) => {
+    const newErrors: Partial<Record<keyof LeadFormInput, string>> = {};
+    let isValid = true;
+
+    if (step === 1) {
+      if (!formData.companyName.trim()) newErrors.companyName = 'Ingresa el nombre de la empresa.';
+      if (!formData.companyRif.trim()) newErrors.companyRif = 'El RIF es obligatorio.';
+      if (!formData.companyEmail.trim()) newErrors.companyEmail = 'Correo corporativo requerido.';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.companyEmail)) newErrors.companyEmail = 'Correo inválido.';
+    } else if (step === 2) {
+      if (!formData.monthlyRevenue) newErrors.monthlyRevenue = 'Selecciona un rango de facturación.';
+      if (!formData.commercialSector) newErrors.commercialSector = 'Selecciona tu sector.';
+    } else if (step === 3) {
+      if (!formData.repName.trim()) newErrors.repName = 'Ingresa el nombre del representante.';
+      if (!formData.repPhone.trim()) newErrors.repPhone = 'Número de contacto requerido.';
+      if (!formData.acceptedContact) newErrors.acceptedContact = 'Debes aceptar los términos.';
     }
-    return err;
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      isValid = false;
+      setShakeField(true);
+      setTimeout(() => setShakeField(false), 500);
+    } else {
+      setErrors({});
+    }
+
+    return isValid;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     const val = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
-    
-    setFormData((prev) => ({ ...prev, [name]: val }));
+    setFormData(prev => ({ ...prev, [name]: val }));
+    if (errors[name as keyof LeadFormInput]) {
+      setErrors(prev => ({ ...prev, [name]: undefined }));
+    }
+  };
 
-    // Realtime clear errors
-    const errorMsg = validateField(name as keyof LeadFormInput, val);
-    setErrors((prev) => ({ ...prev, [name]: errorMsg }));
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep(prev => (prev + 1) as 1 | 2 | 3);
+    }
+  };
+
+  const handlePrev = () => {
+    setCurrentStep(prev => (prev - 1) as 1 | 2 | 3);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validate all fields
-    const newErrors: Partial<Record<keyof LeadFormInput, string>> = {};
-    Object.keys(formData).forEach((key) => {
-      const err = validateField(key as keyof LeadFormInput, formData[key as keyof LeadFormInput]);
-      if (err) newErrors[key as keyof LeadFormInput] = err;
-    });
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      setShakeField(true);
-      setTimeout(() => setShakeField(false), 500);
-      return;
-    }
+    if (!validateStep(3)) return;
 
     setIsSubmitting(true);
-    setSubmitStatus('idle');
-
-    // Simulate fintech lead capture
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitStatus('success');
-      // Reset form
-      setFormData({
-        fullName: '',
-        identityDoc: '',
-        phone: '',
-        email: '',
-        requestType: 'mayorista',
-        city: '',
-        ivooBranch: '',
-        message: '',
-        acceptedContact: true
-      });
+      setCurrentStep(1);
     }, 1500);
   };
 
+  // UI Helpers
   const getBadgeIcon = () => {
     switch (formData.requestType) {
-      case 'mayorista': return <Building2 className="w-6 h-6 text-emerald-600" />;
-      case 'emprendedor': return <UserCircle className="w-6 h-6 text-emerald-600" />;
-      case 'nomina': return <Smartphone className="w-6 h-6 text-emerald-600" />;
-      default: return <Sparkles className="w-6 h-6 text-emerald-600" />;
+      case 'mayorista': return <Building2 className="w-5 h-5 text-emerald-600" />;
+      case 'emprendedor': return <UserCircle className="w-5 h-5 text-emerald-600" />;
+      case 'nomina': return <Smartphone className="w-5 h-5 text-emerald-600" />;
+      default: return <Sparkles className="w-5 h-5 text-emerald-600" />;
     }
   };
 
   return (
     <div
       id={formId}
-      className={`bg-white rounded-[2rem] border border-slate-100 p-8 md:p-12 shadow-xl relative overflow-hidden transition-all duration-300 ${
-        shakeField ? 'animate-bounce' : ''
-      }`}
+      className="bg-white rounded-3xl border border-slate-200/60 shadow-[0_32px_64px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden"
     >
-      {/* Decorative top green accent line */}
-      <span className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#10D66B] to-[#006B3F]"></span>
+      {/* Decorative top accent */}
+      <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-slate-200 via-[#10D66B] to-[#006B3F]"></div>
 
-      <AnimatePresence mode="wait">
-        {submitStatus === 'success' ? (
-          <motion.div
-            key="success-state"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="text-center py-16"
+      {submitStatus === 'success' ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center py-20 px-8"
+        >
+          <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-100">
+            <CheckCircle2 className="w-10 h-10 text-[#10D66B]" />
+          </div>
+          <h3 className="text-3xl font-black text-slate-900 tracking-tight mb-4">
+            ¡Solicitud Recibida!
+          </h3>
+          <p className="text-slate-500 max-w-md mx-auto mb-10 leading-relaxed">
+            Nuestro equipo analizará tu perfil comercial y te contactará en menos de 24 horas para darte respuesta.
+          </p>
+          <button
+            onClick={() => { setSubmitStatus('idle'); setFormData({ ...formData, companyName: '', companyRif: '', companyEmail: '', monthlyRevenue: '', commercialSector: '', repName: '', repPhone: '' }); }}
+            className="px-8 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow-md transition-all cursor-pointer"
           >
-            <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-8 border border-emerald-100">
-              <CheckCircle2 className="w-12 h-12 text-[#10D66B]" />
-            </div>
-            
-            <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-4">
-              ¡Solicitud Recibida con éxito!
-            </h3>
-            
-            <div className="max-w-lg mx-auto text-base text-slate-600 space-y-4 leading-relaxed">
-              <p>
-                <strong>Recibimos tus datos.</strong> Nuestro equipo de analistas de Creditivoo iniciará la revisión de tu perfil comercial de inmediato.
-              </p>
-              <p className="p-5 bg-slate-50 rounded-2xl border border-slate-100 text-sm">
-                Te contactaremos por WhatsApp o correo electrónico para coordinar la carga digital de soportes adicionales y finiquitar la asignación de tu línea disponible.
-              </p>
-            </div>
-
-            <button
-              onClick={() => setSubmitStatus('idle')}
-              className="mt-10 px-8 py-4 bg-[#006B3F] hover:bg-[#005530] text-white text-base font-bold rounded-xl shadow-md transition-all cursor-pointer"
-            >
-              Realizar otra solicitud
-            </button>
-          </motion.div>
-        ) : (
-          <motion.form
-            key="form-fields"
-            onSubmit={handleSubmit}
-            className="space-y-8 text-left"
-          >
-            <div>
-              <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                Comienza tu solicitud Creditivoo
-              </h3>
-              <p className="text-sm text-slate-500 mt-2 leading-relaxed">
-                Déjanos tus datos de contacto iniciales. Evaluaremos tu perfil para contactarte y coordinar tu línea de compra en IVOO.
-              </p>
-            </div>
-
-            {/* Request Type Dynamic Badge Header */}
-            <div className="flex gap-4 items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
-              <div className="p-3 bg-white rounded-xl shadow-sm border border-slate-100/50">
-                {getBadgeIcon()}
-              </div>
-              <div>
-                <p className="text-xs uppercase font-extrabold text-slate-400 tracking-widest leading-none mb-1.5">Perfil Seleccionado</p>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-base font-bold text-slate-900 capitalize tracking-tight">
-                    {formData.requestType === 'mayorista' && 'Mayorista / Compra Comercial'}
-                    {formData.requestType === 'emprendedor' && 'Emprendedor Independiente'}
-                    {formData.requestType === 'nomina' && 'Colaborador Creditivoo Nómina'}
-                    {formData.requestType === 'empresa' && 'Empresa interesada en Afiliarse'}
-                  </span>
+            Nueva Solicitud
+          </button>
+        </motion.div>
+      ) : (
+        <div className="p-8 md:p-12">
+          {/* Progress Indicator */}
+          <div className="mb-12 relative max-w-sm mx-auto">
+            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-100 -translate-y-1/2 z-0"></div>
+            <div 
+              className="absolute top-1/2 left-0 h-0.5 bg-[#10D66B] -translate-y-1/2 z-0 transition-all duration-500 ease-out"
+              style={{ width: currentStep === 1 ? '0%' : currentStep === 2 ? '50%' : '100%' }}
+            ></div>
+            <div className="relative z-10 flex justify-between items-center">
+              {[1, 2, 3].map((step) => (
+                <div key={step} className="flex flex-col items-center gap-2">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all duration-300 ${
+                    currentStep === step 
+                      ? 'bg-white border-[#10D66B] text-[#10D66B] shadow-[0_0_15px_rgba(16,214,107,0.3)] scale-110' 
+                      : currentStep > step 
+                        ? 'bg-[#10D66B] border-[#10D66B] text-white' 
+                        : 'bg-slate-50 border-slate-200 text-slate-400'
+                  }`}>
+                    {currentStep > step ? <Check className="w-4 h-4" /> : step}
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Full Name */}
-              <div className="flex flex-col gap-2">
-                <label htmlFor="fullName" className="text-sm font-bold text-slate-700">
-                  Nombre Completo
-                </label>
-                <input
-                  type="text"
-                  id="fullName"
-                  name="fullName"
-                  placeholder="Ej. Carlos Pérez"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  className={`w-full px-5 py-4 bg-white border rounded-xl text-base text-slate-800 transition-all shadow-sm focus:outline-none focus:bg-white ${
-                    errors.fullName ? 'border-orange-300 focus:ring-2 focus:ring-orange-300/50' : 'border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
-                  }`}
-                />
-                {errors.fullName && (
-                  <span className="text-xs font-semibold text-orange-600 flex items-center gap-1.5 mt-1">
-                    <AlertCircle className="w-4 h-4 shrink-0" />
-                    {errors.fullName}
-                  </span>
-                )}
-              </div>
-
-              {/* Identity Document (Cedula or RIF) */}
-              <div className="flex flex-col gap-2">
-                <label htmlFor="identityDoc" className="text-sm font-bold text-slate-700">
-                  Cédula o RIF comercial
-                </label>
-                <input
-                  type="text"
-                  id="identityDoc"
-                  name="identityDoc"
-                  placeholder="Ej. J-12345678-9 o V-12345678"
-                  value={formData.identityDoc}
-                  onChange={handleChange}
-                  className={`w-full px-5 py-4 bg-white border rounded-xl text-base text-slate-800 transition-all shadow-sm focus:outline-none focus:bg-white ${
-                    errors.identityDoc ? 'border-orange-300 focus:ring-2 focus:ring-orange-300/50' : 'border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
-                  }`}
-                />
-                {errors.identityDoc && (
-                  <span className="text-xs font-semibold text-orange-600 flex items-center gap-1.5 mt-1">
-                    <AlertCircle className="w-4 h-4 shrink-0" />
-                    {errors.identityDoc}
-                  </span>
-                )}
-              </div>
+          <div className="flex justify-between items-center mb-8 pb-6 border-b border-slate-100">
+            <div>
+              <h3 className="text-2xl font-black text-slate-900 tracking-tight">
+                {currentStep === 1 ? 'Datos Legales' : currentStep === 2 ? 'Volumen Comercial' : 'Contacto Directo'}
+              </h3>
+              <p className="text-sm text-slate-500 mt-1">
+                Paso {currentStep} de 3
+              </p>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Phone */}
-              <div className="flex flex-col gap-2">
-                <label htmlFor="phone" className="text-sm font-bold text-slate-700">
-                  Teléfono de contacto / WhatsApp
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  placeholder="Ej. 0414-1234567"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className={`w-full px-5 py-4 bg-white border rounded-xl text-base text-slate-800 transition-all shadow-sm focus:outline-none focus:bg-white ${
-                    errors.phone ? 'border-orange-300 focus:ring-2 focus:ring-orange-300/50' : 'border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
-                  }`}
-                />
-                {errors.phone && (
-                  <span className="text-xs font-semibold text-orange-600 flex items-center gap-1.5 mt-1">
-                    <AlertCircle className="w-4 h-4 shrink-0" />
-                    {errors.phone}
-                  </span>
-                )}
-              </div>
-
-              {/* Email */}
-              <div className="flex flex-col gap-2">
-                <label htmlFor="email" className="text-sm font-bold text-slate-700">
-                  Correo Electrónico
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="carlos@ejemplo.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className={`w-full px-5 py-4 bg-white border rounded-xl text-base text-slate-800 transition-all shadow-sm focus:outline-none focus:bg-white ${
-                    errors.email ? 'border-orange-300 focus:ring-2 focus:ring-orange-300/50' : 'border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
-                  }`}
-                />
-                {errors.email && (
-                  <span className="text-xs font-semibold text-orange-600 flex items-center gap-1.5 mt-1">
-                    <AlertCircle className="w-4 h-4 shrink-0" />
-                    {errors.email}
-                  </span>
-                )}
-              </div>
+            <div className="hidden sm:flex gap-2 items-center px-3 py-1.5 bg-slate-50 border border-slate-200/60 rounded-lg">
+              {getBadgeIcon()}
+              <span className="text-[10px] font-extrabold text-slate-600 uppercase tracking-widest">
+                {formData.requestType}
+              </span>
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Request Type dropdown */}
-              <div className="flex flex-col gap-2 md:col-span-1">
-                <label htmlFor="requestType" className="text-sm font-bold text-slate-700">
-                  Tipo de Solicitud
-                </label>
-                <select
-                  id="requestType"
-                  name="requestType"
-                  value={formData.requestType}
-                  onChange={handleChange}
-                  className="w-full px-5 py-4 bg-white border border-slate-200 rounded-xl text-base text-slate-800 shadow-sm focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+          <form className={`space-y-6 transition-transform duration-300 ${shakeField ? 'animate-bounce' : ''}`}>
+            
+            <AnimatePresence mode="wait">
+              {currentStep === 1 && (
+                <motion.div
+                  key="step1"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-6"
                 >
-                  <option value="mayorista">Mayorista / Compra Comercial</option>
-                  <option value="emprendedor">Emprendedor Independiente</option>
-                  <option value="nomina">Colaborador Nómina</option>
-                  <option value="empresa">Empresa Interesada</option>
-                </select>
-              </div>
-
-              {/* City */}
-              <div className="flex flex-col gap-2 md:col-span-1">
-                <label htmlFor="city" className="text-sm font-bold text-slate-700">
-                  Ciudad de residencia
-                </label>
-                <select
-                  id="city"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  className={`w-full px-5 py-4 bg-white border rounded-xl text-base text-slate-800 shadow-sm focus:outline-none focus:bg-white ${
-                    errors.city ? 'border-orange-300 focus:ring-2 focus:ring-orange-300/50' : 'border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
-                  }`}
-                >
-                  <option value="">-- Selecciona --</option>
-                  {CITIES.map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-                {errors.city && (
-                  <span className="text-xs font-semibold text-orange-600 flex items-center gap-1.5 mt-1">
-                    <AlertCircle className="w-4 h-4 shrink-0" />
-                    {errors.city}
-                  </span>
-                )}
-              </div>
-
-              {/* IVOO Branch */}
-              <div className="flex flex-col gap-2 md:col-span-1">
-                <label htmlFor="ivooBranch" className="text-sm font-bold text-slate-700">
-                  Sucursal de interés
-                </label>
-                <select
-                  id="ivooBranch"
-                  name="ivooBranch"
-                  value={formData.ivooBranch}
-                  onChange={handleChange}
-                  className={`w-full px-5 py-4 bg-white border rounded-xl text-base text-slate-800 shadow-sm focus:outline-none focus:bg-white ${
-                    errors.ivooBranch ? 'border-orange-300 focus:ring-2 focus:ring-orange-300/50' : 'border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
-                  }`}
-                >
-                  <option value="">-- Selecciona sucursal --</option>
-                  {IVOO_BRANCHES.map((b) => (
-                    <option key={b} value={b}>{b}</option>
-                  ))}
-                </select>
-                {errors.ivooBranch && (
-                  <span className="text-xs font-semibold text-orange-600 flex items-center gap-1.5 mt-1">
-                    <AlertCircle className="w-4 h-4 shrink-0" />
-                    {errors.ivooBranch}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Optional message */}
-            <div className="flex flex-col gap-2">
-              <label htmlFor="message" className="text-sm font-bold text-slate-700">
-                Mensaje adicional o descripción del negocio (Opcional)
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                rows={4}
-                placeholder="Ej. Vendo teléfonos en Puerto Cabello a través de WhatsApp Web y catálogo digital..."
-                value={formData.message}
-                onChange={handleChange}
-                className="w-full px-5 py-4 bg-white border border-slate-200 rounded-xl text-base text-slate-800 shadow-sm transition-all focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 resize-none"
-              ></textarea>
-            </div>
-
-            {/* Verification Checkbox */}
-            <div className="flex flex-col gap-3 pt-6 border-t border-slate-100">
-              <label className="relative flex items-start gap-4 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  name="acceptedContact"
-                  checked={formData.acceptedContact}
-                  onChange={handleChange}
-                  className="mt-1 h-5 w-5 rounded border-slate-300 text-[#10D66B] focus:ring-[#10D66B] transition-all cursor-pointer"
-                />
-                <span className="text-sm text-slate-500 leading-relaxed select-none group-hover:text-slate-700 transition-colors">
-                  Acepto ser contactado por los analistas y asesores comerciales de Creditivoo para dar continuidad a mi solicitud y remitir recaudos adicionales.
-                </span>
-              </label>
-              {errors.acceptedContact && (
-                <span className="text-xs font-semibold text-orange-600 flex items-center gap-1.5 pl-9">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  {errors.acceptedContact}
-                </span>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700">Nombre de la Empresa / Comercial</label>
+                    <input
+                      type="text"
+                      name="companyName"
+                      value={formData.companyName}
+                      onChange={handleChange}
+                      placeholder="Ej. Inversiones Global C.A."
+                      className={`w-full px-5 py-4 bg-slate-50 border rounded-xl text-sm text-slate-900 focus:outline-none focus:bg-white transition-all ${
+                        errors.companyName ? 'border-orange-300 focus:ring-2 focus:ring-orange-300/50' : 'border-slate-200 focus:border-emerald-500'
+                      }`}
+                    />
+                    {errors.companyName && <span className="text-xs text-orange-500 font-semibold flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5"/> {errors.companyName}</span>}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700">RIF Comercial o Personal</label>
+                    <input
+                      type="text"
+                      name="companyRif"
+                      value={formData.companyRif}
+                      onChange={handleChange}
+                      placeholder="Ej. J-12345678-9"
+                      className={`w-full px-5 py-4 bg-slate-50 border rounded-xl text-sm text-slate-900 focus:outline-none focus:bg-white transition-all ${
+                        errors.companyRif ? 'border-orange-300 focus:ring-2 focus:ring-orange-300/50' : 'border-slate-200 focus:border-emerald-500'
+                      }`}
+                    />
+                    {errors.companyRif && <span className="text-xs text-orange-500 font-semibold flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5"/> {errors.companyRif}</span>}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700">Correo Corporativo</label>
+                    <input
+                      type="email"
+                      name="companyEmail"
+                      value={formData.companyEmail}
+                      onChange={handleChange}
+                      placeholder="contacto@empresa.com"
+                      className={`w-full px-5 py-4 bg-slate-50 border rounded-xl text-sm text-slate-900 focus:outline-none focus:bg-white transition-all ${
+                        errors.companyEmail ? 'border-orange-300 focus:ring-2 focus:ring-orange-300/50' : 'border-slate-200 focus:border-emerald-500'
+                      }`}
+                    />
+                    {errors.companyEmail && <span className="text-xs text-orange-500 font-semibold flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5"/> {errors.companyEmail}</span>}
+                  </div>
+                </motion.div>
               )}
-            </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full mt-4 py-5 bg-[#10D66B] hover:bg-[#00B555] disabled:bg-opacity-50 text-white font-extrabold text-lg tracking-wide rounded-xl shadow-lg shadow-[#10D66B]/20 transition-all flex items-center justify-center gap-3 group cursor-pointer"
-            >
-              <span>{isSubmitting ? 'Procesando tu solicitud...' : 'Enviar solicitud oficial'}</span>
-              {!isSubmitting && <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
-            </button>
-          </motion.form>
-        )}
-      </AnimatePresence>
+              {currentStep === 2 && (
+                <motion.div
+                  key="step2"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-6"
+                >
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700">Estimado de Facturación Mensual</label>
+                    <select
+                      name="monthlyRevenue"
+                      value={formData.monthlyRevenue}
+                      onChange={handleChange}
+                      className={`w-full px-5 py-4 bg-slate-50 border rounded-xl text-sm text-slate-900 focus:outline-none focus:bg-white transition-all ${
+                        errors.monthlyRevenue ? 'border-orange-300 focus:ring-2 focus:ring-orange-300/50' : 'border-slate-200 focus:border-emerald-500'
+                      }`}
+                    >
+                      <option value="">Seleccione un rango</option>
+                      {REVENUE_TIERS.map(tier => <option key={tier} value={tier}>{tier}</option>)}
+                    </select>
+                    {errors.monthlyRevenue && <span className="text-xs text-orange-500 font-semibold flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5"/> {errors.monthlyRevenue}</span>}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700">Sector Comercial</label>
+                    <select
+                      name="commercialSector"
+                      value={formData.commercialSector}
+                      onChange={handleChange}
+                      className={`w-full px-5 py-4 bg-slate-50 border rounded-xl text-sm text-slate-900 focus:outline-none focus:bg-white transition-all ${
+                        errors.commercialSector ? 'border-orange-300 focus:ring-2 focus:ring-orange-300/50' : 'border-slate-200 focus:border-emerald-500'
+                      }`}
+                    >
+                      <option value="">Seleccione su sector primario</option>
+                      {SECTORS.map(sector => <option key={sector} value={sector}>{sector}</option>)}
+                    </select>
+                    {errors.commercialSector && <span className="text-xs text-orange-500 font-semibold flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5"/> {errors.commercialSector}</span>}
+                  </div>
+                </motion.div>
+              )}
+
+              {currentStep === 3 && (
+                <motion.div
+                  key="step3"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-6"
+                >
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700">Nombre del Representante</label>
+                    <input
+                      type="text"
+                      name="repName"
+                      value={formData.repName}
+                      onChange={handleChange}
+                      placeholder="Ej. Carlos Pérez"
+                      className={`w-full px-5 py-4 bg-slate-50 border rounded-xl text-sm text-slate-900 focus:outline-none focus:bg-white transition-all ${
+                        errors.repName ? 'border-orange-300 focus:ring-2 focus:ring-orange-300/50' : 'border-slate-200 focus:border-emerald-500'
+                      }`}
+                    />
+                    {errors.repName && <span className="text-xs text-orange-500 font-semibold flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5"/> {errors.repName}</span>}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700">Teléfono Directo / WhatsApp</label>
+                    <input
+                      type="tel"
+                      name="repPhone"
+                      value={formData.repPhone}
+                      onChange={handleChange}
+                      placeholder="Ej. 0414-1234567"
+                      className={`w-full px-5 py-4 bg-slate-50 border rounded-xl text-sm text-slate-900 focus:outline-none focus:bg-white transition-all ${
+                        errors.repPhone ? 'border-orange-300 focus:ring-2 focus:ring-orange-300/50' : 'border-slate-200 focus:border-emerald-500'
+                      }`}
+                    />
+                    {errors.repPhone && <span className="text-xs text-orange-500 font-semibold flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5"/> {errors.repPhone}</span>}
+                  </div>
+                  
+                  <div className="pt-4 flex flex-col gap-2">
+                    <label className="flex items-start gap-3 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        name="acceptedContact"
+                        checked={formData.acceptedContact}
+                        onChange={handleChange}
+                        className="mt-0.5 h-5 w-5 rounded border-slate-300 text-[#10D66B] focus:ring-[#10D66B] cursor-pointer"
+                      />
+                      <span className="text-[13px] text-slate-500 leading-relaxed group-hover:text-slate-700">
+                        Acepto que Creditivoo evalúe esta solicitud preliminar y me contacte para continuar con el proceso comercial formal.
+                      </span>
+                    </label>
+                    {errors.acceptedContact && <span className="text-xs text-orange-500 font-semibold flex items-center gap-1 ml-8"><AlertCircle className="w-3.5 h-3.5"/> {errors.acceptedContact}</span>}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Navigation Buttons */}
+            <div className="flex gap-4 pt-6 border-t border-slate-100">
+              {currentStep > 1 && (
+                <button
+                  type="button"
+                  onClick={handlePrev}
+                  className="px-6 py-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold text-sm rounded-xl transition-all cursor-pointer flex items-center gap-2"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  Anterior
+                </button>
+              )}
+              
+              <button
+                type="button"
+                onClick={currentStep === 3 ? handleSubmit : handleNext}
+                disabled={isSubmitting}
+                className={`flex-1 py-4 bg-[#10D66B] hover:bg-[#00B555] disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-extrabold text-sm rounded-xl shadow-[0_8px_20px_rgba(16,214,107,0.2)] hover:shadow-[0_12px_25px_rgba(16,214,107,0.3)] transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  currentStep === 3 ? 'bg-slate-900 hover:bg-slate-800 shadow-slate-900/20 hover:shadow-slate-900/30' : ''
+                }`}
+              >
+                <span>
+                  {isSubmitting 
+                    ? 'Procesando...' 
+                    : currentStep === 3 
+                      ? 'Enviar Solicitud Oficial' 
+                      : 'Continuar'
+                  }
+                </span>
+                {!isSubmitting && (
+                  currentStep === 3 ? <Send className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+            
+          </form>
+        </div>
+      )}
     </div>
   );
 }

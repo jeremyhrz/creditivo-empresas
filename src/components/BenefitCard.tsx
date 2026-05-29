@@ -4,15 +4,17 @@
  */
 
 import React from 'react';
+import { motion } from 'motion/react';
 import { Sparkles, Sliders, Smartphone, CheckCircle } from 'lucide-react';
 import { Benefit } from '../types';
 
 interface BenefitCardProps {
   key?: any;
   benefit: Benefit;
+  index?: number;
 }
 
-export default function BenefitCard({ benefit }: BenefitCardProps) {
+export default function BenefitCard({ benefit, index = 0 }: BenefitCardProps) {
   const getIcon = () => {
     switch (benefit.id) {
       case 'perfil':
@@ -27,7 +29,13 @@ export default function BenefitCard({ benefit }: BenefitCardProps) {
   };
 
   return (
-    <div className="flex gap-5 p-6 sm:p-8 bg-white border border-slate-100 rounded-[2rem] hover:shadow-md hover:border-emerald-100 transition-all duration-300">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
+      className="flex gap-5 p-6 sm:p-8 bg-white border border-slate-100 rounded-[2rem] hover:shadow-md hover:border-emerald-100 transition-all duration-300"
+    >
       <div className="flex-shrink-0 p-4 h-14 w-14 rounded-2xl bg-emerald-50 flex items-center justify-center border border-emerald-100/50">
         {getIcon()}
       </div>
@@ -39,6 +47,6 @@ export default function BenefitCard({ benefit }: BenefitCardProps) {
           {benefit.description}
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 }

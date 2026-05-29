@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { motion } from 'motion/react';
 import { ArrowRight, ChevronRight, Sparkles } from 'lucide-react';
 
 interface CTASectionProps {
@@ -13,10 +14,19 @@ interface CTASectionProps {
 
 export default function CTASection({ onCtaClick, onCompanyClick }: CTASectionProps) {
   return (
-    <section className="py-24 md:py-32 bg-gradient-to-b from-white to-slate-50/50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center space-y-8">
+    <section className="relative py-28 md:py-36 bg-gradient-to-b from-white via-slate-50/40 to-white overflow-hidden">
+      {/* ── Ambient Glow Orbs ── */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-emerald-400/[0.06] rounded-full blur-[140px] pointer-events-none"></div>
+      <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-emerald-300/[0.05] rounded-full blur-[100px] pointer-events-none"></div>
 
+      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: [0.215, 0.610, 0.355, 1] }}
+          className="text-center space-y-8"
+        >
           {/* Micro-badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 rounded-full border border-emerald-100/60 text-xs font-bold text-emerald-700 select-none">
             <Sparkles className="w-3.5 h-3.5" />
@@ -52,10 +62,10 @@ export default function CTASection({ onCtaClick, onCompanyClick }: CTASectionPro
           </div>
 
           {/* Disclaimer */}
-          <p className="text-xs text-slate-400 max-w-sm mx-auto pt-2 leading-relaxed">
+          <p className="text-xs text-slate-500 max-w-sm mx-auto pt-2 leading-relaxed">
             *La asignación de línea se realiza por evaluación manual, no por aprobación automática. Sin cobros ocultos ni papeleo bancario.
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

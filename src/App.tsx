@@ -35,6 +35,7 @@ import RequirementTabs from './components/RequirementTabs';
 import StatusBadge from './components/StatusBadge';
 import LeadForm from './components/LeadForm';
 import CreditSimulator from './components/CreditSimulator';
+import DashboardSimulation from './components/DashboardSimulation';
 import FAQAccordion from './components/FAQAccordion';
 import CTASection from './components/CTASection';
 import Footer from './components/Footer';
@@ -137,9 +138,19 @@ export default function App() {
             className="pt-24"
           >
             {/* Segment Selection Cards */}
-            <section className="py-28 md:py-36 bg-white">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-14">
-                <div className="max-w-2xl mx-auto space-y-4">
+            <section className="relative py-28 md:py-36 bg-white overflow-hidden">
+              {/* ── Ambient Glow ── */}
+              <div className="absolute -top-10 left-1/4 w-72 h-72 bg-emerald-400/10 rounded-full blur-[120px] pointer-events-none"></div>
+              <div className="absolute -bottom-16 right-1/3 w-64 h-64 bg-cyan-400/[0.06] rounded-full blur-[100px] pointer-events-none"></div>
+
+              <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-14">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.7, ease: [0.215, 0.610, 0.355, 1] }}
+                  className="max-w-2xl mx-auto space-y-4"
+                >
                   <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100/50 px-4 py-1.5 rounded-full uppercase tracking-widest">
                     Opciones de financiamiento
                   </span>
@@ -149,7 +160,7 @@ export default function App() {
                   <p className="text-lg text-slate-500 font-normal max-w-lg mx-auto">
                     Tres modalidades diseñadas para tu perfil comercial.
                   </p>
-                </div>
+                </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
                   {SEGMENTS.map((segment, index) => (
@@ -166,9 +177,18 @@ export default function App() {
             </section>
 
             {/* What is Creditivoo — Grid instead of dense paragraphs */}
-            <section className="py-28 md:py-36 bg-slate-50/60 border-t border-slate-100">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
-                <div className="text-center max-w-2xl mx-auto space-y-4">
+            <section className="relative py-28 md:py-36 bg-slate-50/60 border-t border-slate-100 overflow-hidden">
+              {/* ── Ambient Glow ── */}
+              <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-emerald-400/[0.07] rounded-full blur-[120px] pointer-events-none"></div>
+
+              <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.7, ease: [0.215, 0.610, 0.355, 1] }}
+                  className="text-center max-w-2xl mx-auto space-y-4"
+                >
                   <span className="text-xs font-bold text-emerald-700 bg-white border border-emerald-100/50 shadow-sm px-4 py-1.5 rounded-full uppercase tracking-widest">
                     ¿Qué es Creditivoo?
                   </span>
@@ -178,7 +198,7 @@ export default function App() {
                   <p className="text-lg text-slate-500 font-normal max-w-lg mx-auto">
                     No somos un banco. Somos tu línea directa de compra.
                   </p>
-                </div>
+                </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {BENEFITS.map((benefit, index) => (
@@ -189,12 +209,21 @@ export default function App() {
             </section>
 
             {/* Creditivoo Mayorista — Clean grid, no dense text */}
-            <section className="py-28 md:py-36 bg-white border-t border-slate-100">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <section className="relative py-28 md:py-36 bg-white border-t border-slate-100 overflow-hidden">
+              {/* ── Ambient Glow ── */}
+              <div className="absolute -top-10 right-1/4 w-72 h-72 bg-emerald-400/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+              <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                   
                   {/* Left: benefit grid cards */}
-                  <div className="space-y-6 order-2 lg:order-1">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.7, ease: [0.215, 0.610, 0.355, 1] }}
+                    className="space-y-6 order-2 lg:order-1"
+                  >
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {[
                         { icon: BarChart3, title: 'Perfil de ventas', desc: 'Asignación basada en tu actividad comercial.' },
@@ -202,19 +231,33 @@ export default function App() {
                         { icon: ShieldCheck, title: 'Inventario directo', desc: 'Respaldado por el stock oficial de IVOO.' },
                         { icon: TrendingUp, title: 'Compras por volumen', desc: 'Ideal para re-abastecimiento corporativo.' }
                       ].map((item, idx) => (
-                        <div key={idx} className="p-6 bg-slate-50 border border-slate-100 rounded-2xl space-y-3 hover:shadow-md transition-shadow duration-300">
-                          <div className="p-2.5 bg-emerald-50 rounded-xl w-fit border border-emerald-100/50">
+                        <motion.div
+                          key={idx}
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.215, 0.610, 0.355, 1] }}
+                          className="relative group p-6 bg-white border border-slate-200/50 rounded-2xl space-y-3 hover:scale-[1.02] hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 overflow-hidden"
+                        >
+                          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-300/40 to-transparent"></div>
+                          <div className="p-2.5 bg-emerald-50 rounded-xl w-fit border border-emerald-100/50 group-hover:shadow-emerald-200/40 group-hover:shadow-lg transition-shadow duration-500">
                             <item.icon className="w-5 h-5 text-emerald-600" />
                           </div>
                           <h4 className="font-extrabold text-slate-900 text-base">{item.title}</h4>
                           <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
-                        </div>
+                        </motion.div>
                       ))}
                     </div>
-                  </div>
+                  </motion.div>
 
                   {/* Right: heading and CTA */}
-                  <div className="space-y-6 text-left order-1 lg:order-2">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.7, delay: 0.1, ease: [0.215, 0.610, 0.355, 1] }}
+                    className="space-y-6 text-left order-1 lg:order-2"
+                  >
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-100/50">
                       <TrendingUp className="w-4 h-4" />
                       <span>Especial para Distribuidores</span>
@@ -232,7 +275,7 @@ export default function App() {
                       <span>Solicitar Mayorista</span>
                       <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </button>
-                  </div>
+                  </motion.div>
                 </div>
               </div>
             </section>
@@ -283,26 +326,43 @@ export default function App() {
             </section>
 
             {/* Creditivoo Nómina — Two cards grid, no dense text */}
-            <section className="py-28 md:py-36 bg-white border-t border-slate-100">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <section className="relative py-28 md:py-36 bg-white border-t border-slate-100 overflow-hidden">
+              {/* ── Ambient Glow ── */}
+              <div className="absolute top-1/2 left-1/6 w-72 h-72 bg-indigo-400/[0.06] rounded-full blur-[120px] pointer-events-none"></div>
+
+              <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                   
                   {/* Left: two stacked benefit cards */}
-                  <div className="space-y-5 order-2 lg:order-1">
-                    <div className="p-8 bg-slate-50 border border-slate-100 rounded-2xl">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.7, ease: [0.215, 0.610, 0.355, 1] }}
+                    className="space-y-5 order-2 lg:order-1"
+                  >
+                    <div className="relative group p-8 bg-white border border-slate-200/50 rounded-2xl hover:scale-[1.02] hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 overflow-hidden">
+                      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-300/30 to-transparent"></div>
                       <span className="text-xs font-black text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg uppercase tracking-widest inline-block mb-3 border border-indigo-100/50">Para la Empresa</span>
                       <p className="text-lg font-bold text-slate-900 leading-snug mb-2">Cero carga administrativa</p>
                       <p className="text-base text-slate-500">No compromete flujo de caja ni implica descuento de nómina.</p>
                     </div>
-                    <div className="p-8 bg-slate-50 border border-slate-100 rounded-2xl">
+                    <div className="relative group p-8 bg-white border border-slate-200/50 rounded-2xl hover:scale-[1.02] hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 overflow-hidden">
+                      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-300/30 to-transparent"></div>
                       <span className="text-xs font-black text-[#006B3F] bg-emerald-50 px-3 py-1 rounded-lg uppercase tracking-widest inline-block mb-3 border border-emerald-100/50">Para el Colaborador</span>
                       <p className="text-lg font-bold text-slate-900 leading-snug mb-2">Acceso directo simplificado</p>
                       <p className="text-base text-slate-500">Línea de crédito verificando tu relación laboral.</p>
                     </div>
-                  </div>
+                  </motion.div>
 
                   {/* Right: heading and CTAs */}
-                  <div className="space-y-6 text-left order-1 lg:order-2">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.7, delay: 0.1, ease: [0.215, 0.610, 0.355, 1] }}
+                    className="space-y-6 text-left order-1 lg:order-2"
+                  >
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-full border border-indigo-100/50">
                       <Building className="w-4 h-4" />
                       <span>Beneficio Laboral</span>
@@ -327,7 +387,7 @@ export default function App() {
                         Activar como colaborador
                       </button>
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
               </div>
             </section>
@@ -345,9 +405,19 @@ export default function App() {
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="pt-24"
           >
-            <section className="py-28 md:py-36 bg-white">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-14">
-                <div className="max-w-2xl mx-auto space-y-4">
+            <section className="relative py-28 md:py-36 bg-white overflow-hidden">
+              {/* ── Ambient Glow ── */}
+              <div className="absolute -top-10 left-1/4 w-72 h-72 bg-emerald-400/10 rounded-full blur-[120px] pointer-events-none"></div>
+              <div className="absolute bottom-0 right-1/3 w-56 h-56 bg-cyan-400/[0.05] rounded-full blur-[100px] pointer-events-none"></div>
+
+              <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-14">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.7, ease: [0.215, 0.610, 0.355, 1] }}
+                  className="max-w-2xl mx-auto space-y-4"
+                >
                   <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100/50 px-4 py-1.5 rounded-full uppercase tracking-widest">
                     Paso a paso
                   </span>
@@ -357,13 +427,19 @@ export default function App() {
                   <p className="text-lg text-slate-500 font-normal max-w-md mx-auto">
                     Sube tus documentos desde el celular. Nosotros procesamos todo.
                   </p>
-                </div>
+                </motion.div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 pt-4">
                   {STEPS.map((step, index) => (
                     <StepCard key={step.number} step={step} index={index} />
                   ))}
                 </div>
-                <div className="pt-8">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="pt-8"
+                >
                   <button
                     onClick={() => handleActionClick('mayorista')}
                     className="px-10 py-4 bg-[#006B3F] hover:bg-[#005530] text-white text-sm font-extrabold rounded-xl shadow-lg hover:shadow-emerald-200 transition-all cursor-pointer inline-flex items-center gap-2 group"
@@ -371,10 +447,10 @@ export default function App() {
                     <span>Comenzar solicitud</span>
                     <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
-                  <p className="text-xs text-slate-400 mt-4 max-w-sm mx-auto font-medium">
+                  <p className="text-xs text-slate-500 mt-4 max-w-sm mx-auto font-medium">
                     *Evaluación sujeta al horario de analistas de Creditivoo.
                   </p>
-                </div>
+                </motion.div>
               </div>
             </section>
           </motion.div>
@@ -390,9 +466,18 @@ export default function App() {
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="pt-24"
           >
-            <section className="py-28 md:py-36 bg-white">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
-                <div className="text-center max-w-2xl mx-auto space-y-4">
+            <section className="relative py-28 md:py-36 bg-white overflow-hidden">
+              {/* ── Ambient Glow ── */}
+              <div className="absolute top-1/4 right-1/5 w-80 h-80 bg-emerald-400/[0.07] rounded-full blur-[120px] pointer-events-none"></div>
+
+              <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.7, ease: [0.215, 0.610, 0.355, 1] }}
+                  className="text-center max-w-2xl mx-auto space-y-4"
+                >
                   <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100/50 px-4 py-1.5 rounded-full uppercase tracking-widest">
                     Recaudación básica
                   </span>
@@ -402,7 +487,7 @@ export default function App() {
                   <p className="text-lg text-slate-500 font-normal max-w-md mx-auto">
                     Selecciona tu modalidad para ver los documentos requeridos.
                   </p>
-                </div>
+                </motion.div>
                 <RequirementTabs />
               </div>
             </section>
@@ -419,9 +504,19 @@ export default function App() {
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="pt-24"
           >
-            <section className="py-28 md:py-36 bg-slate-50/60 border-b border-slate-100">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
-                <div className="text-center max-w-2xl mx-auto space-y-4">
+            <section className="relative py-28 md:py-36 bg-slate-50/60 border-b border-slate-100 overflow-hidden">
+              {/* ── Ambient Glow ── */}
+              <div className="absolute -top-10 left-1/4 w-72 h-72 bg-emerald-400/10 rounded-full blur-[120px] pointer-events-none"></div>
+              <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-indigo-400/[0.05] rounded-full blur-[100px] pointer-events-none"></div>
+
+              <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.7, ease: [0.215, 0.610, 0.355, 1] }}
+                  className="text-center max-w-2xl mx-auto space-y-4"
+                >
                   <span className="text-xs font-bold text-emerald-700 bg-white border border-emerald-100/50 shadow-sm px-4 py-1.5 rounded-full uppercase tracking-widest">
                     Aliados Corporativos
                   </span>
@@ -431,7 +526,7 @@ export default function App() {
                   <p className="text-lg text-slate-500 font-normal max-w-lg mx-auto">
                     Beneficio laboral de primer nivel sin costos de administración crediticia.
                   </p>
-                </div>
+                </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {[
@@ -440,24 +535,44 @@ export default function App() {
                     { icon: CreditCard, title: 'Sin descuento', desc: 'El empleado paga directamente.' },
                     { icon: Globe, title: 'Pilotos controlados', desc: 'Empieza con un grupo clave.' }
                   ].map((card, idx) => (
-                    <div key={idx} className="p-8 bg-white border border-slate-100 rounded-2xl text-left space-y-4 shadow-sm hover:shadow-md transition-shadow duration-300">
-                      <div className="p-3 rounded-xl bg-emerald-50 text-emerald-600 w-fit border border-emerald-100/50">
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.215, 0.610, 0.355, 1] }}
+                      className="relative group p-8 bg-white border border-slate-200/50 rounded-2xl text-left space-y-4 hover:scale-[1.02] hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 overflow-hidden"
+                    >
+                      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-300/40 to-transparent"></div>
+                      <div className="absolute -top-6 -right-6 w-24 h-24 bg-emerald-400/[0.05] rounded-full blur-[40px] pointer-events-none group-hover:bg-emerald-400/[0.1] transition-all duration-700"></div>
+                      <div className="relative p-3 rounded-xl bg-emerald-50 text-emerald-600 w-fit border border-emerald-100/50 group-hover:shadow-emerald-200/40 group-hover:shadow-lg transition-shadow duration-500">
                         <card.icon className="w-5 h-5" />
                       </div>
-                      <h4 className="font-extrabold text-slate-900 text-lg">{card.title}</h4>
-                      <p className="text-base text-slate-500">{card.desc}</p>
-                    </div>
+                      <h4 className="relative font-extrabold text-slate-900 text-lg">{card.title}</h4>
+                      <p className="relative text-base text-slate-500">{card.desc}</p>
+                    </motion.div>
                   ))}
                 </div>
 
-                <div className="text-center pt-4">
+                {/* ── Dashboard Simulation ── */}
+                <div className="pt-8">
+                  <DashboardSimulation />
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="text-center pt-4"
+                >
                   <button
                     onClick={() => handleActionClick('empresa')}
                     className="px-10 py-4 bg-[#10D66B] hover:bg-[#00B555] text-white font-extrabold text-sm rounded-xl shadow-lg shadow-[#10D66B]/15 hover:shadow-emerald-500/20 transition-all cursor-pointer inline-flex items-center gap-2"
                   >
                     <span>Quiero afiliar mi empresa</span>
                   </button>
-                </div>
+                </motion.div>
               </div>
             </section>
             <CTASection onCtaClick={() => handleActionClick('mayorista')} onCompanyClick={() => handleActionClick('empresa')} />
@@ -474,9 +589,18 @@ export default function App() {
             transition={{ duration: 0.4 }}
             className="pt-24"
           >
-            <section className="py-28 md:py-36 bg-white">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
-                <div className="text-center max-w-2xl mx-auto space-y-4">
+            <section className="relative py-28 md:py-36 bg-white overflow-hidden">
+              {/* ── Ambient Glow ── */}
+              <div className="absolute top-1/3 left-1/3 w-72 h-72 bg-emerald-400/[0.06] rounded-full blur-[120px] pointer-events-none"></div>
+
+              <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.7, ease: [0.215, 0.610, 0.355, 1] }}
+                  className="text-center max-w-2xl mx-auto space-y-4"
+                >
                   <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100/50 px-4 py-1.5 rounded-full uppercase tracking-widest">
                     Resuelve tus dudas
                   </span>
@@ -486,7 +610,7 @@ export default function App() {
                   <p className="text-lg text-slate-500 font-normal max-w-md mx-auto">
                     Respuestas claras sobre la línea Creditivoo de IVOO.
                   </p>
-                </div>
+                </motion.div>
                 <FAQAccordion />
               </div>
             </section>

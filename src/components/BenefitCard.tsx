@@ -30,16 +30,22 @@ export default function BenefitCard({ benefit, index = 0 }: BenefitCardProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
-      className="flex gap-5 p-6 sm:p-8 bg-white border border-slate-100 rounded-[2rem] hover:shadow-md hover:border-emerald-100 transition-all duration-300"
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.7, delay: index * 0.08, ease: [0.215, 0.610, 0.355, 1] }}
+      className="relative group flex gap-5 p-7 sm:p-9 bg-white border border-slate-200/50 rounded-[2rem] hover:scale-[1.02] hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 ease-out overflow-hidden"
     >
-      <div className="flex-shrink-0 p-4 h-14 w-14 rounded-2xl bg-emerald-50 flex items-center justify-center border border-emerald-100/50">
+      {/* ── Inner glow orb for depth ── */}
+      <div className="absolute -top-8 -right-8 w-32 h-32 bg-emerald-400/[0.06] rounded-full blur-[60px] pointer-events-none group-hover:bg-emerald-400/[0.12] transition-all duration-700"></div>
+
+      {/* ── Reflective top border line ── */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-300/40 to-transparent"></div>
+
+      <div className="relative flex-shrink-0 p-4 h-14 w-14 rounded-2xl bg-emerald-50 flex items-center justify-center border border-emerald-100/50 group-hover:shadow-emerald-200/40 group-hover:shadow-lg transition-shadow duration-500">
         {getIcon()}
       </div>
-      <div className="flex flex-col justify-center">
+      <div className="relative flex flex-col justify-center">
         <h4 className="font-extrabold text-slate-900 text-lg md:text-xl leading-snug mb-2 tracking-tight">
           {benefit.title}
         </h4>
